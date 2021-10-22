@@ -1,11 +1,7 @@
 package main
 
 import (
-	"fmt"
 	"reflect"
-	"regexp"
-	"sort"
-	"strings"
 
 	"github.com/pkg/errors"
 )
@@ -22,11 +18,8 @@ import (
 // If you add non-reference types to your configuration struct, be sure to rewrite Clone as a deep
 // copy appropriate for your types.
 type configuration struct {
-	ExcludeBots     bool
-	RejectPosts     bool
-	CensorCharacter string
-	BadWordsList    string
-	WarningMessage  string `json:"WarningMessage"`
+	WarningMessage string `json:"WarningMessage"`
+	ExcludeBots    bool
 }
 
 // Clone shallow copies the configuration. Your implementation may require a deep copy if
@@ -86,31 +79,5 @@ func (p *Plugin) OnConfigurationChange() error {
 		return errors.Wrap(err, "failed to load plugin configuration")
 	}
 
-	p.setConfiguration(configuration)
-
-	// Addind space around the words
-	regexString := wordListToRegex(configuration.BadWordsList)
-	regex, err := regexp.Compile(regexString)
-	if err != nil {
-		return err
-	}
-
-	p.badWordsRegex = regex
-
 	return nil
-}
-
-func wordListToRegex(wordList string) (regexStr string) {
-	split := strings.Split(wordList, ",")
-
-	// Sorting by length because if "bad" and "bad word" are in the list,
-	// we want "bad word" to be the first match
-	sort.Slice(split, func(i, j int) bool { return len(split[i]) > len(split[j]) })
-
-	regexStr = fmt.Sprintf(
-		`(?mi)\b(%s)\b`,
-		strings.Join(split, "|"),
-	)
-
-	return regexStr
 }

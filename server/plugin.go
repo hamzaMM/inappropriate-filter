@@ -1,11 +1,15 @@
 package main
 
 import (
-	"fmt"
-	"regexp"
+	"encoding/json"
 	"strings"
 	"sync"
 	"unicode"
+
+	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/aws/credentials"
+	"github.com/aws/aws-sdk-go/aws/session"
+	"github.com/aws/aws-sdk-go/service/sagemakerruntime"
 
 	"golang.org/x/text/runes"
 	"golang.org/x/text/transform"
@@ -18,14 +22,52 @@ import (
 type Plugin struct {
 	plugin.MattermostPlugin
 
+	configuration *configuration
+
 	// configurationLock synchronizes access to the configuration.
 	configurationLock sync.RWMutex
 
 	// configuration is the active plugin configuration. Consult getConfiguration and
 	// setConfiguration for usage.
-	configuration *configuration
+}
+type val struct {
+	Label string  `json:"label"`
+	Score float64 `json:"score"`
+}
 
-	badWordsRegex *regexp.Regexp
+func Predict(message string) string {
+	sess, err := session.NewSession(&aws.Config{
+		Region:      aws.String("us-east-2"),
+		Credentials: credentials.NewStaticCredentials("AKIA4H5E5ZK6O5METHPI", "VLf3lB67/YuL+xZs8tJjJbhckATGLN3rsBrk5SGj", ""),
+	})
+	if err != nil {
+		panic(err)
+	}
+
+	svc := sagemakerruntime.New(sess)
+
+	body := `{"inputs": "%s"}`
+
+	body = strings.Replace(body, "%s", message, 1)
+
+	params := sagemakerruntime.InvokeEndpointInput{}
+	params.SetAccept("application/json")
+	params.SetContentType("application/json")
+	params.SetBody([]byte(body))
+	params.SetEndpointName("huggingface-tensorflow-inference-2021-10-20-03-19-53-382")
+
+	req, out := svc.InvokeEndpointRequest(&params)
+	if err := req.Send(); err != nil {
+		// process error
+		panic(err)
+	}
+
+	var in []val
+	if err := json.Unmarshal(out.Body, &in); err != nil {
+		panic(err)
+	}
+
+	return in[0].Label
 }
 
 func (p *Plugin) FilterPost(post *model.Post) (*model.Post, string) {
@@ -38,31 +80,22 @@ func (p *Plugin) FilterPost(post *model.Post) (*model.Post, string) {
 
 	postMessageWithoutAccents := removeAccents(post.Message)
 
-	if !p.badWordsRegex.MatchString(postMessageWithoutAccents) {
+	toxic := Predict(postMessageWithoutAccents)
+
+	sb := "LABEL_0"
+
+	// If message in not toxic, do not block the messag
+	if toxic == sb {
 		return post, ""
 	}
 
-	detectedBadWords := p.badWordsRegex.FindAllString(postMessageWithoutAccents, -1)
+	p.API.SendEphemeralPost(post.UserId, &model.Post{
+		ChannelId: post.ChannelId,
+		Message:   "Message not allowed because it is inappropriate",
+		RootId:    post.RootId,
+	})
 
-	if configuration.RejectPosts {
-		p.API.SendEphemeralPost(post.UserId, &model.Post{
-			ChannelId: post.ChannelId,
-			Message:   fmt.Sprintf(configuration.WarningMessage, strings.Join(detectedBadWords, ", ")),
-			RootId:    post.RootId,
-		})
-
-		return nil, fmt.Sprintf("Profane word not allowed: %s", strings.Join(detectedBadWords, ", "))
-	}
-
-	for _, word := range detectedBadWords {
-		post.Message = strings.ReplaceAll(
-			post.Message,
-			word,
-			strings.Repeat(p.getConfiguration().CensorCharacter, len(word)),
-		)
-	}
-
-	return post, ""
+	return nil, "Message not allowed because it is inappropriate"
 }
 
 func (p *Plugin) MessageWillBePosted(_ *plugin.Context, post *model.Post) (*model.Post, string) {
