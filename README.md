@@ -50,7 +50,7 @@ predictor = huggingface_model.deploy(
 
 ```
 
-After the model model is deployed, it will create a model, endpoint configuration, and endpoint which will serve the model.
+After the model is deployed, it will create a model, endpoint configuration, and endpoint which will serve the model.
 
 To use custom endpoint configuration create a endpoint using the sagemaker console, and add paramter endpoint_name with the deploy method.
 More information available here: https://sagemaker.readthedocs.io/en/stable/api/inference/model.html
