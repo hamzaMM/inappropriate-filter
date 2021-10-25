@@ -18,8 +18,12 @@ import (
 // If you add non-reference types to your configuration struct, be sure to rewrite Clone as a deep
 // copy appropriate for your types.
 type configuration struct {
-	WarningMessage string `json:"WarningMessage"`
-	ExcludeBots    bool
+	WarningMessage    string `json:"WarningMessage"`
+	AccessKeyID       string `json:"AccessKeyID"`
+	SecretAccessKeyID string `json:"SecretAccessKeyID"`
+	EndpointName      string `json:"EndpointName"`
+	Region            string `json:"Region"`
+	ExcludeBots       bool
 }
 
 // Clone shallow copies the configuration. Your implementation may require a deep copy if
@@ -78,6 +82,8 @@ func (p *Plugin) OnConfigurationChange() error {
 	if err := p.API.LoadPluginConfiguration(configuration); err != nil {
 		return errors.Wrap(err, "failed to load plugin configuration")
 	}
+
+	p.setConfiguration(configuration)
 
 	return nil
 }

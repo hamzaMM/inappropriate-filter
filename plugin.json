@@ -27,8 +27,31 @@
         "display_name": "Warning Message:",
         "type": "text",
         "help_text": "Enter warning message to be displayed when a user enters inappropriate message",
-        "placeholder": "E.g., Your post has been rejected by the Inappropriate Filter",
-        "default": "Your post has been rejected by the Inappropriate Filter"
+        "default": "This message may be inappropriate for this channel"
+      },
+      {
+        "key": "AccessKeyID",
+        "display_name": "Access Key ID :",
+        "type": "text",
+        "help_text": "Enter AWS IAM User Access Key ID"
+      },
+      {
+        "key": "SecretAccessKeyID",
+        "display_name": "Secret Access Key ID:",
+        "type": "text",
+        "help_text": "Enter AWS IAM Secret User Access Key ID"
+      },
+      {
+        "key": "EndpointName",
+        "display_name": "Sagemaker Endpoint Name:",
+        "type": "text",
+        "help_text": "Enter AWS Sagemaker Endpoint Name"
+      },
+      {
+        "key": "Region",
+        "display_name": "Sagemaker Endpoint Region:",
+        "type": "text",
+        "help_text": "Enter AWS Sagemaker Endpoint Region, e.g us-east-2"
       }
     ],
     "header": "",

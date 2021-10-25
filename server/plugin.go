@@ -35,10 +35,11 @@ type val struct {
 	Score float64 `json:"score"`
 }
 
-func Predict(message string) string {
+func (p *Plugin) Predict(message string) string {
+	configuration := p.getConfiguration()
 	sess, err := session.NewSession(&aws.Config{
-		Region:      aws.String("us-east-2"),
-		Credentials: credentials.NewStaticCredentials("AKIA4H5E5ZK6O5METHPI", "VLf3lB67/YuL+xZs8tJjJbhckATGLN3rsBrk5SGj", ""),
+		Region:      aws.String(configuration.Region),
+		Credentials: credentials.NewStaticCredentials(configuration.AccessKeyID, configuration.SecretAccessKeyID, ""),
 	})
 	if err != nil {
 		panic(err)
@@ -54,7 +55,7 @@ func Predict(message string) string {
 	params.SetAccept("application/json")
 	params.SetContentType("application/json")
 	params.SetBody([]byte(body))
-	params.SetEndpointName("huggingface-tensorflow-inference-2021-10-20-03-19-53-382")
+	params.SetEndpointName(configuration.EndpointName)
 
 	req, out := svc.InvokeEndpointRequest(&params)
 	if err := req.Send(); err != nil {
@@ -80,7 +81,7 @@ func (p *Plugin) FilterPost(post *model.Post) (*model.Post, string) {
 
 	postMessageWithoutAccents := removeAccents(post.Message)
 
-	toxic := Predict(postMessageWithoutAccents)
+	toxic := p.Predict(postMessageWithoutAccents)
 
 	sb := "LABEL_0"
 
@@ -91,11 +92,11 @@ func (p *Plugin) FilterPost(post *model.Post) (*model.Post, string) {
 
 	p.API.SendEphemeralPost(post.UserId, &model.Post{
 		ChannelId: post.ChannelId,
-		Message:   "Message not allowed because it is inappropriate",
+		Message:   configuration.WarningMessage,
 		RootId:    post.RootId,
 	})
 
-	return nil, "Message not allowed because it is inappropriate"
+	return nil, configuration.WarningMessage
 }
 
 func (p *Plugin) MessageWillBePosted(_ *plugin.Context, post *model.Post) (*model.Post, string) {
