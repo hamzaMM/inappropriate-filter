@@ -62,7 +62,13 @@ Once the endpoint is serving you may close and stop the notebook instance.
 Coming Soon
 
 ## Configuration in Mattermost webapp
+![config](./images/config.png)
 
+Get Access Key from IAM > Users > Security Credentials > Create Access Key
+
+Get Endpoint Name from Sagemaker Console > Inference > Endpoint  
+
+Get region from Sagemaker Console > Inference > Models > My_Model  
 
 
 ### Usage
