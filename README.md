@@ -23,7 +23,7 @@ role = sagemaker.get_execution_role()
 
 from sagemaker.huggingface.model import HuggingFaceModel
 
-# Hub Model configuration. <https://huggingface.co/models>
+#Hub Model configuration. <https://huggingface.co/models>
 hub = {
   'HF_MODEL_ID':'hamzaMM/hamza-bert', # model_id from hf.co/models
   'HF_TASK':'text-classification' 
@@ -31,7 +31,7 @@ hub = {
 
 role = IAM role ARN
 
-# create Hugging Face Model Class
+#create Hugging Face Model Class
 huggingface_model = HuggingFaceModel(
    env=hub, # configuration for loading model from Hub
    role=role, # iam role with permissions to create an Endpoint
@@ -40,7 +40,7 @@ huggingface_model = HuggingFaceModel(
    py_version='py37', # python version used
 )
 
-# deploy model to SageMaker Inference
+#deploy model to SageMaker Inference
 predictor = huggingface_model.deploy(
    initial_instance_count=1,
    instance_type="ml.t2.medium" #Change to any instance type
