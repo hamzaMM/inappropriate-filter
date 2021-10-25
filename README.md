@@ -45,7 +45,7 @@ predictor = huggingface_model.deploy(
    initial_instance_count=1,
    instance_type="ml.t2.medium" #Change to any instance type
    #Un comment to add elastic inference to speed up prediction latency
-   #initial_instance_count=1, instance_type="ml.m4.xlarge",  
+   #instance_type="ml.m4.xlarge",  
 )
 
 ```
