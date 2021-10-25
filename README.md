@@ -6,13 +6,13 @@ This plugin allows you to censor inappropriate messages on your Mattermost serve
 
 ## Plugin Marketplace
 
-1. Go to **Main Menu > Plugin Marketplace** in Mattermost.
+1. Go to **Main Menu -> Plugin Marketplace** in Mattermost.
 2. Search for "Inappropriate Filter" or manually find the plugin from the list and click **Install**
 3. Once the plugin has downloaded and been installed, click **Configure**.
 
 ## Setup with AWS Sagemaker
 
-1. Under Sagemaker console go to Notebook > Notebook Instances and create a notebooke instance
+1. Under Sagemaker console go to Notebook -> Notebook Instances and create a notebooke instance
 2. Open the notebook instance and create a new 
 3. Run the following script in a cell to load and deploy the model:
 
@@ -64,11 +64,11 @@ Coming Soon
 ## Configuration in Mattermost webapp
 ![config](./images/config.png)
 
-Get Access Key from IAM > Users > Security Credentials > Create Access Key
+Get Access Key from IAM -> Users -> Security Credentials -> Create Access Key
 
-Get Endpoint Name from Sagemaker Console > Inference > Endpoint  
+Get Endpoint Name from Sagemaker Console -> Inference -> Endpoint  
 
-Get region from Sagemaker Console > Inference > Models > My_Model  
+Get region from Sagemaker Console -> Inference -> Models -> My_Model  
 
 
 ### Usage
