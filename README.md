@@ -16,7 +16,7 @@ This plugin allows you to censor inappropriate messages on your Mattermost serve
 2. Open the notebook instance and create a new 
 3. Run the following script in a cell to load and deploy the model:
 
------------------------------------------------------------------------
+```python
 import sagemaker
 sess = sagemaker.Session()
 role = sagemaker.get_execution_role()
@@ -48,7 +48,7 @@ predictor = huggingface_model.deploy(
    #initial_instance_count=1, instance_type="ml.m4.xlarge",  
 )
 
------------------------------------------------------------------------
+```
 
 After the model model is deployed, it will create a model, endpoint configuration, and endpoint which will serve the model.
 
