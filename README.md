@@ -73,7 +73,5 @@ Get region from Sagemaker Console -> Inference -> Models -> My_Model
 
 ### Usage
 
-You can edit the bad words list in **System Console > Plugins > Inappropriate Filter**.
-
 ![Post rejected by the plugin](./images/demo.gif)
 
