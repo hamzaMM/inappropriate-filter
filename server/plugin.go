@@ -92,11 +92,10 @@ func (p *Plugin) FilterPost(post *model.Post) (*model.Post, string) {
 
 	reg := regexp.MustCompile("[^a-zA-Z]+")
 
-	postMessageWithoutAccents = reg.ReplaceAllString(postMessageWithoutAccents, " ")
-
 	words := strings.Fields(postMessageWithoutAccents)
 
 	for i, x := range words {
+		words[i] = reg.ReplaceAllString(x, "")
 		words[i] = lemmatizer.Lemma(x) // note the = instead of :=
 	}
 
