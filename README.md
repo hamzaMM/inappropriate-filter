@@ -12,7 +12,7 @@ This plugin allows you to censor inappropriate messages on your Mattermost serve
 
 ## Setup with AWS Sagemaker
 
-1. Under Sagemaker console go to Notebook -> Notebook Instances and create a notebooke instance
+1. Under Sagemaker console go to Notebook -> Notebook Instances and create a Jupyter instance
 2. Open the notebook instance and create a new 'conda_tensorflow2_p36' notebook
 3. Run the following script in a cell to load and deploy the model:
 
