@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"regexp"
 	"strings"
 	"sync"
 	"unicode"
@@ -10,6 +11,9 @@ import (
 	"github.com/aws/aws-sdk-go/aws/credentials"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/sagemakerruntime"
+
+	"github.com/aaaton/golem/v4"
+	"github.com/aaaton/golem/v4/dicts/en"
 
 	"golang.org/x/text/runes"
 	"golang.org/x/text/transform"
@@ -81,6 +85,22 @@ func (p *Plugin) FilterPost(post *model.Post) (*model.Post, string) {
 
 	postMessageWithoutAccents := removeAccents(post.Message)
 
+	lemmatizer, err := golem.New(en.New())
+	if err != nil {
+		panic(err)
+	}
+
+	reg := regexp.MustCompile("[^a-zA-Z]+")
+
+	postMessageWithoutAccents = reg.ReplaceAllString(postMessageWithoutAccents, " ")
+
+	words := strings.Fields(postMessageWithoutAccents)
+
+	for i, x := range words {
+		words[i] = lemmatizer.Lemma(x) // note the = instead of :=
+	}
+
+	postMessageWithoutAccents = strings.Join(words, " ")
 	toxic := p.Predict(postMessageWithoutAccents)
 
 	sb := "LABEL_0"
