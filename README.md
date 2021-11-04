@@ -25,7 +25,7 @@ from sagemaker.huggingface.model import HuggingFaceModel
 
 #Hub Model configuration. <https://huggingface.co/models>
 hub = {
-  'HF_MODEL_ID':'hamzaMM/hamza-bert', # model_id from hf.co/models
+  'HF_MODEL_ID':'hamzaMM/Inappropriate-Filter', # model_id from hf.co/models
   'HF_TASK':'text-classification' 
 }
 
@@ -45,7 +45,7 @@ predictor = huggingface_model.deploy(
    initial_instance_count=1,
    instance_type="ml.t2.medium" #Change to any instance type
    #Un comment to add elastic inference to speed up prediction latency
-   #instance_type="ml.m4.xlarge",  
+   #accelerator_type='ml.eia2.medium',  
 )
 
 ```
